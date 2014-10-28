@@ -4,25 +4,25 @@ import time, datetime
 from datetime import timedelta
 import json
 
+import boto
+
 # from django.core.management import setup_environ
-# sys.path.append('/opt/django-projects/')
-# import represent.settings
-# setup_environ(represent.settings)
-# from represent.elections.models import Timestamp
+
+
+# sys.path.append('/opt/django-projects/elections/')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 # from django.shortcuts import render_to_response, redirect, get_list_or_404, get_object_or_404
 # from django.core.mail import send_mail, mail_admins
 # from django.http import HttpResponse, HttpRequest
 # from django.template import loader, Context
-# from django.contrib.gis.geos import Point
-import boto
-# from django.utils.encoding import force_unicode
+from django.utils.encoding import force_unicode
 
 starter = datetime.datetime.now()
 sname = os.path.basename(__file__).replace('.py', '')
 starter = datetime.datetime.now()
 YEAR = starter.year
-print "%s is in the kitchen: %s" % (sname, starter)
+print "%s is in the kitchen: %s" % (sname, starter.strftime('%c'))
 
 def roundit(flot):
     if flot > 0:
@@ -73,7 +73,7 @@ def get_results():
             THIRD = each
     winner = None
     statewide = gov.get_reporting_unit('Florida1')
-    gop_state_total, dem_state_total, 3rd_state_total = (0, 0, 0)
+    gop_state_total, dem_state_total, third_state_total = 0, 0, 0
     for each in statewide.results:
         if each.candidate.is_winner:
             winner=each.candidate.name
@@ -90,17 +90,17 @@ def get_results():
             third_state_comma=intcomma(each.vote_total)
             third_state_pct=roundit(each.vote_total_percent)
     state_gov_leading = "no leader"
-    state_gov_victory_votes, state_gov_victory_comma = 0, 0
+    state_gov_victory_votes, state_gov_victory_comma = None, None
     if gop_state_total > dem_state_total and gop_state_total > third_state_total:
-        state_gov_leading = GOP
+        state_gov_leading = GOP.last_name
         state_gov_victory_votes = gop_state_total - dem_state_total
         state_gov_victory_comma = intcomma(state_gov_victory_votes)
     elif dem_state_total > gop_state_total and dem_state_total > third_state_total:
-        state_gov_leading = DEM
+        state_gov_leading = DEM.last_name
         state_gov_victory_votes = dem_state_total - gov_state_total
         state_gov_victory_comma = intcomma(state_gov_victory_votes)
     elif third_state_total > gop_state_total and third_state_total > dem_state_total:
-        state_gov_leading = THIRD
+        state_gov_leading = THIRD.last_name
         state_gov_victory_votes = third_state_total - dem_state_total
         state_gov_victory_comma = intcomma(state_gov_victory_votes)
     timestamp = datetime.datetime.now()
@@ -120,7 +120,7 @@ def get_results():
                     'ptotal': statewide.precincts_total, 
                     'pcount': statewide.precincts_reporting,
                     'ppct': roundone(statewide.precincts_reporting_percent), 
-                    'leading': state_gov_leading.last_name,
+                    'leading': state_gov_leading,
                     'dem': dem_state_total,
                     'dem_comma': dem_state_comma,
                     'dem_pct': dem_state_pct,
@@ -132,6 +132,7 @@ def get_results():
                     'third_pct': third_state_pct, 
                     }
                 }
+                
     for each in gov.counties:
         if each.fips=='12086':
             FIPS = '12025'
@@ -158,42 +159,18 @@ def get_results():
                 mapdict[FIPS]['third_comma']=intcomma(cand.vote_total)
                 mapdict[FIPS]['third_pct']=roundit(cand.vote_total_percent)
         if mapdict[FIPS]['pcount']==0:
-            mapdict[FIPS]['leading_prez']='no_results'
-        elif mapdict[FIPS]['obama']>mapdict[FIPS]['romney']:
-            mapdict[FIPS]['leading_prez']='obama'
-            mapdict[FIPS]['victory_votes']=mapdict[FIPS]['obama']-mapdict[FIPS]['romney']
+            mapdict[FIPS]['leading_gov']='no_results'
+        elif mapdict[FIPS]['gop']>mapdict[FIPS]['dem']:
+            mapdict[FIPS]['leading_gov']=GOP.last_name
+            mapdict[FIPS]['victory_votes']=mapdict[FIPS]['gop']-mapdict[FIPS]['dem']
             mapdict[FIPS]['victory_votes_comma']=intcomma(mapdict[FIPS]['victory_votes'])
-        elif mapdict[FIPS]['romney']>mapdict[FIPS]['obama']:
-            mapdict[FIPS]['leading_prez']='romney'
-            mapdict[FIPS]['victory_votes']=mapdict[FIPS]['romney']-mapdict[FIPS]['obama']
+        elif mapdict[FIPS]['dem']>mapdict[FIPS]['gop']:
+            mapdict[FIPS]['leading_gov']=DEM.last_name
+            mapdict[FIPS]['victory_votes']=mapdict[FIPS]['dem']-mapdict[FIPS]['gop']
             mapdict[FIPS]['victory_votes_comma']=intcomma(mapdict[FIPS]['victory_votes'])
         else:
-            mapdict[FIPS]['leading_prez']='tie'
+            mapdict[FIPS]['leading_gov']='tie'
 
-    for each in sen.counties:
-        if each.fips=='12086':
-            FIPS = '12025'
-        else:
-            FIPS = each.fips
-        for cand in each.results:
-            if "Nelson" in cand.candidate.name:
-                mapdict[FIPS]['nelson']=cand.vote_total
-                mapdict[FIPS]['nelson_comma']=intcomma(cand.vote_total)
-                mapdict[FIPS]['nelson_pct']=roundit(cand.vote_total_percent)
-            elif "Mack" in cand.candidate.name:
-                mapdict[FIPS]['mack']=cand.vote_total
-                mapdict[FIPS]['mack_comma']=intcomma(cand.vote_total)
-                mapdict[FIPS]['mack_pct']=roundit(cand.vote_total_percent)
-        if mapdict[FIPS]['pcount']==0:
-            mapdict[FIPS]['leading']='no_results'
-        elif mapdict[FIPS]['gop']>mapdict[FIPS]['dem'] and mapdict[FIPS]['gop']>mapdict[FIPS]['third']:
-            mapdict[FIPS]['leading']=GOP.last_name
-        elif mapdict[FIPS]['dem']>mapdict[FIPS]['gop'] and mapdict[FIPS]['dem']>mapdict[FIPS]['third']:
-            mapdict[FIPS]['leading']=DEM.last_name
-        elif mapdict[FIPS]['third']>mapdict[FIPS]['gop'] and mapdict[FIPS]['third']>mapdict[FIPS]['dem']:
-            mapdict[FIPS]['leading']=THIRD.last_name
-        else:
-            mapdict[FIPS]['leading']='tie'
     map_out="var R%s = %s;" % (YEAR, json.dumps(mapdict))
     data_out=json.dumps(mapdict)
     datafile = "/opt/django-projects/elections/data/countydata.json"
@@ -211,7 +188,7 @@ def get_results():
     s3=boto.connect_s3(os.getenv('S3_KEY'), os.getenv('S3_SECRET'))
     bucket = s3.create_bucket('tbprojects')
     k=Key(bucket)
-    k.key="%sjs/%s.js" % (rootkey, YEAR)
+    k.key="%sjs/R%s.js" % (rootkey, YEAR)
     k.content_type='application/javascript'
     k.set_contents_from_string(map_out)
     k.set_acl('public-read')
@@ -225,16 +202,16 @@ def get_results():
     print "baked R%s backup %s" % (YEAR, tstamp_slug)
 
     # print bakery
-    tablesuff = "tables/county%s.txt" % YEAR
-    from represent.elections import views
-    x = HttpRequest()
-    k.key="%s%s" % (rootkey, tablesuff)
-    tmptxt = views.elex2012(x)
-    k.content_type='application/octet-stream'
-    k.set_contents_from_string(tmptxt.content)
-    k.set_acl('public-read')
-    URL3 = "%s%s" % (roots3, tablesuff)
-    print "baked print table county%s to:\n%s" % (YEAR, URL3)
+#     tablesuff = "tables/county%s.txt" % YEAR
+#     from represent.elections import views
+#     x = HttpRequest()
+#     k.key="%s%s" % (rootkey, tablesuff)
+#     tmptxt = views.elex2012(x)
+#     k.content_type='application/octet-stream'
+#     k.set_contents_from_string(tmptxt.content)
+#     k.set_acl('public-read')
+#     URL3 = "%s%s" % (roots3, tablesuff)
+#     print "baked print table county%s to:\n%s" % (YEAR, URL3)
 
 
 if __name__ == "__main__":
