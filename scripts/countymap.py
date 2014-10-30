@@ -6,10 +6,7 @@ import json
 
 import boto
 
-# from django.core.management import setup_environ
-
-
-# sys.path.append('/opt/django-projects/elections/')
+sys.path.append('/opt/django-projects/elections/')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 # from django.shortcuts import render_to_response, redirect, get_list_or_404, get_object_or_404
@@ -84,11 +81,11 @@ def get_results():
         if each.candidate.party=="Dem":
             dem_state_total=each.vote_total
             dem_state_comma=intcomma(each.vote_total)
-            dem_state_pct=roundit(each.vote_total_percent)
+            dem_state_pct=roundone(each.vote_total_percent)
         if each.candidate.party=="Lib":
             third_state_total=each.vote_total
             third_state_comma=intcomma(each.vote_total)
-            third_state_pct=roundit(each.vote_total_percent)
+            third_state_pct=roundone(each.vote_total_percent)
     state_gov_leading = "no leader"
     state_gov_victory_votes, state_gov_victory_comma = None, None
     if gop_state_total > dem_state_total and gop_state_total > third_state_total:
@@ -120,7 +117,7 @@ def get_results():
                     'ptotal': statewide.precincts_total, 
                     'pcount': statewide.precincts_reporting,
                     'ppct': roundone(statewide.precincts_reporting_percent), 
-                    'leading': state_gov_leading,
+                    'leading_gov': state_gov_leading,
                     'dem': dem_state_total,
                     'dem_comma': dem_state_comma,
                     'dem_pct': dem_state_pct,
@@ -149,15 +146,15 @@ def get_results():
             if cand.candidate.party == 'GOP':
                 mapdict[FIPS]['gop']=cand.vote_total
                 mapdict[FIPS]['gop_comma']=intcomma(cand.vote_total)
-                mapdict[FIPS]['gop_pct']=roundit(cand.vote_total_percent)
+                mapdict[FIPS]['gop_pct']=roundone(cand.vote_total_percent)
             elif cand.candidate.party == 'Dem':
                 mapdict[FIPS]['dem']=cand.vote_total
                 mapdict[FIPS]['dem_comma']=intcomma(cand.vote_total)
-                mapdict[FIPS]['dem_pct']=roundit(cand.vote_total_percent)
+                mapdict[FIPS]['dem_pct']=roundone(cand.vote_total_percent)
             elif cand.candidate.party == 'Lib':
                 mapdict[FIPS]['third']=cand.vote_total
                 mapdict[FIPS]['third_comma']=intcomma(cand.vote_total)
-                mapdict[FIPS]['third_pct']=roundit(cand.vote_total_percent)
+                mapdict[FIPS]['third_pct']=roundone(cand.vote_total_percent)
         if mapdict[FIPS]['pcount']==0:
             mapdict[FIPS]['leading_gov']='no_results'
         elif mapdict[FIPS]['gop']>mapdict[FIPS]['dem']:
@@ -170,6 +167,26 @@ def get_results():
             mapdict[FIPS]['victory_votes_comma']=intcomma(mapdict[FIPS]['victory_votes'])
         else:
             mapdict[FIPS]['leading_gov']='tie'
+    with open('opt/django-projects/elections/data/voter_reg.json', 'r') as f:
+        regd = json.loads(f.read())
+        for key in regd:
+            mapdict[key]['registered']=regd[key]['reg']
+
+#     cdict = {
+#         'timestamp': timestamp,
+#         'tstamp': tstamp,
+#         'precincts': precincts,
+#         'pre_pct': pre_pct,
+#         'results': mapdict,
+#         'tbcounties': tbcounties,
+#         }
+#     slug=tstamp[:2]+tstamp[3:5]+tstamp[6:8]
+#     response = HttpResponse(mimetype='text/txt')
+#     response['Content-Disposition'] = 'attachment; filename=county2012-%s.txt' % slug
+#     t = loader.get_template('elections/county.html')
+#     c = Context(cdict)
+#     response.write(t.render(c))
+#     return response
 
     map_out="var R%s = %s;" % (YEAR, json.dumps(mapdict))
     data_out=json.dumps(mapdict)
@@ -203,10 +220,10 @@ def get_results():
 
     # print bakery
 #     tablesuff = "tables/county%s.txt" % YEAR
-#     from represent.elections import views
+#     from tables import views
 #     x = HttpRequest()
 #     k.key="%s%s" % (rootkey, tablesuff)
-#     tmptxt = views.elex2012(x)
+#     tmptxt = views.elex_tables(x)
 #     k.content_type='application/octet-stream'
 #     k.set_contents_from_string(tmptxt.content)
 #     k.set_acl('public-read')
