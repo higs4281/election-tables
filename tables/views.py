@@ -1,4 +1,5 @@
 import os, sys
+from collections import OrderedDict
 from django.shortcuts import render_to_response, redirect, get_list_or_404, get_object_or_404
 from django.core.mail import send_mail, mail_admins
 from django.http import HttpResponse, HttpRequest
@@ -15,8 +16,19 @@ S3_SECRET = os.getenv('S3_SECRET')
 
 data_path = '/opt/django-projects/elections/data'
 data_file = '%s/countydata.json' % data_path
+county_file = '%s/voter_reg.json' % data_path
+with open(county_file, 'r') as f:
+    countydata = json.loads(f.read())
+county_tuples = sorted([(countydata[fips]['name'], fips) for fips in countydata if fips != '12'])
 
-def elex_tables(request, preview=False):
+def tables(request):
+    rdate = datetime.datetime.now()
+    with open(data_file, 'r') as f:
+        data = json.loads(f.read())
+    ordered = OrderedDict([(fips, data[fips]) for name, fips in county_tuples])
+    return render_to_response('tables.html', {'ordered': ordered, 'counties': county_tuples, 'data': data, 'latest': data['tstamp'], 'fla': data['12']})
+
+def counties(request, preview=False):
     """generates a styled print table of county results for a general election"""
     with open(data_file, 'r') as f:
         data = json.loads(f.read())
@@ -50,26 +62,15 @@ def elex_tables(request, preview=False):
         'tbcounties': tbcounties,
         }
     if preview == False:
-        if senate == False:
-            response = HttpResponse(mimetype='text/txt')
-            response['Content-Disposition'] = 'attachment; filename=county2012%s.txt' % tstamp
-            t = loader.get_template('elections/county.html')
-            c = Context(cdict)
-            response.write(t.render(c))
-            return response
-        else:
-            response = HttpResponse(mimetype='text/txt')
-            response['Content-Disposition'] = 'attachment; filename=county-sen2012%s.txt' % tstamp
-            t = loader.get_template('elections/county-sen.html')
-            c = Context(cdict)
-            response.write(t.render(c))
-            return response
+        response = HttpResponse(mimetype='text/txt')
+        response['Content-Disposition'] = 'attachment; filename=county2012%s.txt' % tstamp
+        t = loader.get_template('elections/counties.html')
+        c = Context(cdict)
+        response.write(t.render(c))
+        return response
 
     else:
-        if senate == False:
-            return render_to_response('elections/county-preview.html', cdict)
-        else:
-            return render_to_response('elections/county-sen-preview.html', cdict)
+        return render_to_response('counties-preview.html', cdict)
 
 
 

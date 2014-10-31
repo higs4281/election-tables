@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>{% load humanize %}
+ <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>2014 special election table</title>
+    <link rel="stylesheet" type="text/css" href="http://autonomy.s3.amazonaws.com/lib/style.css" />
+    <link rel="stylesheet" type="text/css" href="/stand-your-ground-law/media/css/violence.css" />
+    <style type="text/css">
+        p {font-size: 1.15em !important; line-height: 1.2em !important;}
+        li {font-size: 1.15em !important; line-height: 1.2em !important;}
+        .dash h4 {margin-bottom:20px !important; margin-top:20px !important; font-weight:bold;}
+        .button {
+          display: block;
+          width: 300px;
+          height: 25px;
+          margin-bottom: 10px;
+          background: #87A9A0 !important;
+          padding: 10px;
+          text-align: center;
+          border-radius: 5px;
+          color: white;
+          font-weight: bold;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="http://faccca.s3.amazonaws.com/css/jquery.dataTables.css" />
+    <link rel="shortcut icon" type="image/ico" href="http://www.tampabay.com/universal/images/template/favicon.ico" />
+    <link rel="icon" type="image/gif" href="http://www.tampabay.com/universal/images/template/favicon.gif" />
+</head>
+<body>
+<div class="container">
+  <div class="row dash">
+      <h1>2014 county results</h1>
+      <h4>Governor's race</h4>
+      <div class="col_8 articleList editorial">
+        <p>Results were last pulled from AP at {{latest}}</p><br />
+        <div class="col_4">
+          <a class="button" href="http://tbprojects.s3.amazonaws.com/elections/2014/results/tables/county-gov2012.txt">Download gov table</a>
+        </div>
+      </div>
+<div class="col_6 articleList editorial">
+    
+        <h4>Voting for governor, by county</h4><br clear="all" />
+        <p>{{fla.pcount|intcomma}} precincts ({{fla.ppct}}%) reporting as of {{data.tstamp}}</p>
+        <table id="county_votes">
+            <thead>
+            <tr>
+            <th>County</th>
+            <th>Rick Scott</th>
+            <th>Charlie Crist</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><strong>FLORIDA</strong></td>
+                <td class="right">{% if fla.leading_gov == "Scott" %}<strong>{{fla.gop_comma}}</strong>{% else %}{{fla.gop_comma}}{% endif %}</td>
+                <td class="right">{% if fla.leading_gov == "Crist" %}<strong>{{fla.dem_comma}}</strong>{% else %}{{fla.dem_comma}}{% endif %}</td>
+            </tr>
+            {% for key, dic in ordered.items %}
+            <tr>
+                <td>{{dic.name}}</td>
+                <td class="right">{% if dic.leading_gov == "Scott" %}<strong>{{dic.gop_comma}}</strong>{% else %}{{dic.gop_comma}}{% endif %}</td>
+                <td class="right">{% if dic.leading_gov == "Crist" %}<strong>{{dic.dem_comma}}</strong>{% else %}{{dic.dem_comma}}{% endif %}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p class="tagline">Results via Associated Press</p>
+      </div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script> 
+<script type="text/javascript" src="http://www.tampabay.com/stand-your-ground-law/media/js/dt19/jquery.dataTables.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('table#county_votes').dataTable( {
+        "bPaginate": false,
+        "bSearch": false,
+        "bLengthChange": true,
+        "bFilter": false,
+        "bInfo": false,
+        "bAutoWidth": true,
+        "bSort": false
+     } );
+} );
+</script>
+  </div>
+    
+    
+    
+    
+    
+    
+    
+    
+</div>
+
+  </div>
+</div>
+</body>
+</html>

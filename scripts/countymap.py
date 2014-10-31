@@ -167,7 +167,7 @@ def get_results():
             mapdict[FIPS]['victory_votes_comma']=intcomma(mapdict[FIPS]['victory_votes'])
         else:
             mapdict[FIPS]['leading_gov']='tie'
-    with open('opt/django-projects/elections/data/voter_reg.json', 'r') as f:
+    with open('/opt/django-projects/elections/data/voter_reg.json', 'r') as f:
         regd = json.loads(f.read())
         for key in regd:
             mapdict[key]['registered']=regd[key]['reg']

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+{% load humanize %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="http://faccca.s3.amazonaws.com/img/favicon.ico" />
+    <title>2012 county results table: President</title>
+    <link rel="stylesheet" type="text/css" href="http://autonomy.s3.amazonaws.com/lib/style.css" />
+    <link rel="stylesheet" href="http://faccca.s3.amazonaws.com/css/faccca.css" media="screen" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://www.tampabay.com/stand-your-ground-law/media/js/dt19/jquery.dataTables.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://faccca.s3.amazonaws.com/css/jquery.dataTables.css" />
+    <link href="http://watchlite.s3.amazonaws.com/media/css/table_jui.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        td.right {text-align: right;}
+        p {font-size: 1.15em !important; line-height: 1.2em !important;}
+        p.tagline {text-align: right;}
+        li {font-size: 1.15em !important; line-height: 1.2em !important;}
+        .dash h4 {margin-bottom:20px !important; margin-top:20px !important; font-weight:bold;}
+        .dash h2 {font-weight:bold;}
+        .button {
+          display: block;
+          width: 115px;
+          height: 25px;
+          background: #4E9CAF;
+          padding: 10px;
+          text-align: center;
+          border-radius: 5px;
+          color: white;
+          font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+  <div class="row dash">
+      <h1>2012 election results</h1><br />
+      <div class="col_6 articleList editorial">
+        <h2>Voting for president, by county</h2><br clear="all" />
+        <p>{{precincts|intcomma}} precincts ({{pre_pct}}%) reporting as of {{timestamp|date:"f a n/j"}}</p>
+        <table id="allData">
+            <thead>
+            <tr>
+            <th>County</th>
+            <th>Barack Obama</th>
+            <th>Mitt Romney</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for county in results %}
+            <tr>
+                <td>{{county.0}}</td>
+                <td class="right">{% if county.1.leading_prez == "obama" %}<strong>{{county.1.obama|intcomma}}</strong>{% else %}{{county.1.obama|intcomma}}{% endif %}</td>
+                <td class="right">{% if county.1.leading_prez == "romney" %}<strong>{{county.1.romney|intcomma}}</strong>{% else %}{{county.1.romney|intcomma}}{% endif %}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><strong>FLORIDA</strong></td>
+                <td class="right">{% if florida.leading_prez == "obama" %}<strong>{{florida.obama|intcomma}}</strong>{% else %}{{florida.obama|intcomma}}{% endif %}</td>
+                <td class="right">{% if florida.leading_prez == "romney" %}<strong>{{florida.romney|intcomma}}</strong>{% else %}{{florida.romney|intcomma}}{% endif %}</td>
+            </tr>
+            </tbody>
+        </table>
+        <p class="tagline">Results via Associated Press</p>
+      </div>
+        <script type="text/javascript">
+        $(document).ready(function() {
+            $('table#allData').dataTable( {
+                "bPaginate": false,
+                "bSearch": false,
+                "bLengthChange": true,
+                "bFilter": false,
+                "bInfo": false,
+                "bAutoWidth": true,
+                "bSort": true
+             } );
+        } );
+        </script>
+  </div>
+</div>
+</body>
+</html>
