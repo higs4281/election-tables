@@ -11,7 +11,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 # from django.shortcuts import render_to_response, redirect, get_list_or_404, get_object_or_404
 # from django.core.mail import send_mail, mail_admins
-# from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest
 # from django.template import loader, Context
 from django.utils.encoding import force_unicode
 
@@ -47,8 +47,11 @@ def intcomma(value):
     else:
         return intcomma(new)
 
+def print_date_style(dtime):
+    return dtime.strftime("%I:%M %p %b. %d").lstrip('0').replace('PM', 'p.m.').replace('AM', 'a.m.').replace('Nov. 04', 'Nov. 4')
+
 def get_results():
-    """posts these results files to s3: R[YEAR].js for maps and R[YEAR].txt for print"""
+    """saves election results as json locally and on s3"""
     from elections import AP
     startday = datetime.date.today()
     client = AP(os.getenv('AP_USER'), os.getenv('AP_PASS'))
@@ -94,7 +97,7 @@ def get_results():
         state_gov_victory_comma = intcomma(state_gov_victory_votes)
     elif dem_state_total > gop_state_total and dem_state_total > third_state_total:
         state_gov_leading = DEM.last_name
-        state_gov_victory_votes = dem_state_total - gov_state_total
+        state_gov_victory_votes = dem_state_total - gop_state_total
         state_gov_victory_comma = intcomma(state_gov_victory_votes)
     elif third_state_total > gop_state_total and third_state_total > dem_state_total:
         state_gov_leading = THIRD.last_name
@@ -104,7 +107,7 @@ def get_results():
 #     dbstamp = Timestamp(stamp=timestamp, page="county results")
 #     dbstamp.save()
 #     tstamp_pk = dbstamp.pk
-    tstamp = timestamp.strftime("%I:%M %p, %x")
+    tstamp = print_date_style(timestamp)
     tstamp_slug = timestamp.strftime("%I%M%p")
     mapdict = {'winner': winner,
                 'victory_votes': state_gov_victory_votes,
@@ -172,22 +175,6 @@ def get_results():
         for key in regd:
             mapdict[key]['registered']=regd[key]['reg']
 
-#     cdict = {
-#         'timestamp': timestamp,
-#         'tstamp': tstamp,
-#         'precincts': precincts,
-#         'pre_pct': pre_pct,
-#         'results': mapdict,
-#         'tbcounties': tbcounties,
-#         }
-#     slug=tstamp[:2]+tstamp[3:5]+tstamp[6:8]
-#     response = HttpResponse(mimetype='text/txt')
-#     response['Content-Disposition'] = 'attachment; filename=county2012-%s.txt' % slug
-#     t = loader.get_template('elections/county.html')
-#     c = Context(cdict)
-#     response.write(t.render(c))
-#     return response
-
     map_out="var R%s = %s;" % (YEAR, json.dumps(mapdict))
     data_out=json.dumps(mapdict)
     datafile = "/opt/django-projects/elections/data/countydata.json"
@@ -199,6 +186,7 @@ def get_results():
     rootkey="elections/%s/results/" % YEAR
     roots3="http://tbprojects.s3.amazonaws.com/%s" % rootkey
     jslug = "R%s.js" % YEAR
+    time.sleep(2)
 
     # json bakery
     from boto.s3.key import Key
@@ -219,11 +207,11 @@ def get_results():
     print "baked R%s backup %s" % (YEAR, tstamp_slug)
 
     # print bakery
-#     tablesuff = "tables/county%s.txt" % YEAR
+#     tablesuff = "tables/county-gov%s.txt" % YEAR
 #     from tables import views
 #     x = HttpRequest()
 #     k.key="%s%s" % (rootkey, tablesuff)
-#     tmptxt = views.elex_tables(x)
+#     tmptxt = views.tables(x, prnt=True)
 #     k.content_type='application/octet-stream'
 #     k.set_contents_from_string(tmptxt.content)
 #     k.set_acl('public-read')

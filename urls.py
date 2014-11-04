@@ -6,8 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^elections/2014/tables/$', 'tables.views.tables'),
-    url(r'^elections/2014/tables/counties/download/$', 'tables.views.counties'),
-    url(r'^elections/2014/tables/counties/preview/$', 'tables.views.counties', {'preview': True}),
+    url(r'^elections/2014/tables/print/$', 'tables.views.tables', {'prnt':True}),
     url(r'^elections/admin/', include(admin.site.urls)),
 )
 

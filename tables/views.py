@@ -1,15 +1,17 @@
 import os, sys
+import os, urllib, re
 from collections import OrderedDict
+import time, datetime
+from datetime import timedelta
+import json
+
+import boto
 from django.shortcuts import render_to_response, redirect, get_list_or_404, get_object_or_404
 from django.core.mail import send_mail, mail_admins
 from django.http import HttpResponse, HttpRequest
 from django.template import loader, Context
-import os, urllib, re
+from django.template.defaultfilters import slugify
 from django.conf import settings
-import time, datetime
-from datetime import timedelta
-import json
-import boto
 
 S3_KEY = os.getenv('S3_KEY')
 S3_SECRET = os.getenv('S3_SECRET')
@@ -20,57 +22,29 @@ county_file = '%s/voter_reg.json' % data_path
 with open(county_file, 'r') as f:
     countydata = json.loads(f.read())
 county_tuples = sorted([(countydata[fips]['name'], fips) for fips in countydata if fips != '12'])
+tbcounties = ["Hernando", "Hillsborough", "Pasco", "Pinellas"]
 
-def tables(request):
+def tables(request, prnt=False):
     rdate = datetime.datetime.now()
-    with open(data_file, 'r') as f:
-        data = json.loads(f.read())
-    ordered = OrderedDict([(fips, data[fips]) for name, fips in county_tuples])
-    return render_to_response('tables.html', {'ordered': ordered, 'counties': county_tuples, 'data': data, 'latest': data['tstamp'], 'fla': data['12']})
-
-def counties(request, preview=False):
-    """generates a styled print table of county results for a general election"""
+    YEAR = rdate.year
     with open(data_file, 'r') as f:
         data = json.loads(f.read())
     tstamp = data['tstamp']
-    startday = datetime.date.today()
-    tbcounties = ["Hernando", "Hillsborough", "Pasco", "Pinellas"]
-    results = []
-    excluder = ['tstamp', 
-                'prez_winner',
-                'sen_winner',
-                'prez_victory_votes',
-                'prez_victory_comma',
-                '12']
-    for each in data.keys():
-        if each not in excluder:
-            results.append((data[each]['name'], 
-                            {'obama': data[each]['obama'], 
-                            'romney': data[each]['romney'], 
-                            'nelson': data[each]['nelson'], 
-                            'mack': data[each]['mack'], 
-                            'leading_prez': data[each]['leading_prez'], 
-                            'leading_sen': data[each]['leading_sen']}))
-    results = sorted(results)
-    florida = data['12']
+    ordered = OrderedDict([(fips, data[fips]) for name, fips in county_tuples])
     cdict = {
-        'tstamp': tstamp,
-        'precincts': data['12']['pcount'],
-        'pre_pct': data['12']['ppct'],
-        'results': results,
-        'florida': florida,
-        'tbcounties': tbcounties,
+        'ordered': ordered, 
+        'counties': county_tuples, 
+        'data': data, 
+        'latest': tstamp,
+        'tbcounties': tbcounties, 
+        'fla': data['12']# '12' is fips code for florida
         }
-    if preview == False:
-        response = HttpResponse(mimetype='text/txt')
-        response['Content-Disposition'] = 'attachment; filename=county2012%s.txt' % tstamp
-        t = loader.get_template('elections/counties.html')
+    if prnt == False:
+        return render_to_response('tables.html', cdict)
+    else:
+        response = HttpResponse(content_type='text/txt')
+        response['Content-Disposition'] = 'attachment; filename=county%s-%s.txt' % (YEAR, slugify(tstamp))
+        t = loader.get_template('print_tables.html')
         c = Context(cdict)
         response.write(t.render(c))
         return response
-
-    else:
-        return render_to_response('counties-preview.html', cdict)
-
-
-
