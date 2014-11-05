@@ -1,0 +1,194 @@
+@charset "UTF-8";
+/* CSS Document */
+
+
+* {margin:0;padding:0;}
+
+body,h1,h2,h3,p,quote,small,form,input,ul,li,ol,label{
+
+	/* Page reset */
+
+	margin:0px;
+
+	padding:0px;
+
+	/*text-align: center;*/
+	
+}
+
+h1 {font-size: 30px; padding: 20px 0 0 0; text-align:left; font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif;}
+h2 {font-size:20px; text-align:left; padding: 30px 0 0 0; font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif;}
+h3 {text-align:left; padding: 20px 0 0 0; font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif; text-align:left;}
+h4 {text-align:left; padding: 5px 0; font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif;}
+p {padding: 5px 0; font-size: 14px; line-height:1.3em; text-align:left; font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif;}
+li, ul {font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif; text-align:left; margin-left:10px; font-size:14px; line-height:1.3em;}
+img {border: 0px;}
+
+/*page setup*/
+#header {width:1000px; height:100px;}
+.logo {width:250px; float:left;}
+.header_ad {width:726px; margin-left:20px; float:right;}
+
+
+.header2 {margin:10px 0 20px 0; height:82px; position: relative; width:980px;}
+.header2 span {position: absolute; width:100%; height:100%; overflow:hidden;}
+
+
+#big_container {width:980px; border: none; background-color: #fff; padding:10px;}
+#main_left {margin: 10px 0 0 0; float: left; width: 640px; display: inline;}
+#right_rail {width: 300px; float: right; margin: 10px 0 0 9px; padding: 0 0 10px 20px; border-left: 1px solid #CCC;}
+#footer {width:1000px; border: none; background-color:#eeeedd; padding-bottom:10px;}
+#footer_left {width:290px; float:left; margin-left:210px;}
+#footer_right {width:500px; float:right;}
+#footer_center {width:500px; text-align:left;}
+
+.caption p { float:right; font-size: 11px; font-weight: normal; color: #666; font-family: Helvetica, "Lucida Sans", Tahoma, sans-serif; border-bottom: none; }
+.columns-padtop {width:800px; text-align:center; margin: 10px 100px;}
+.clear { clear: both; display: block; overflow: hidden; visibility: hidden; width: 0; height: 0; }
+
+/* stuff originally from slicer.css*/
+
+a:link /*.btn-on, a:link .btn-off, a:link .btn-data*/ {text-decoration:none;}
+a:hover {text-decoration:none !important;}
+a:hover .btn-on, a:hover .btn-off, a:hover .btn-data {text-decoration:none !important;}
+
+/*2012 results nav */
+.rnc-nav {width:980px; background-image: url('../img/bunting980.jpg');background-repeat:no-repeat;margin:0;padding:0;height:120px;}
+.nav_logo {text-indent:-2000px;background-image: url('../img/election-title.png'); background-repeat:no-repeat;height:60px;width:390px;margin-left:auto;margin-right:auto;position:relative;top:20px;margin-bottom:20px;}
+#bricks {margin-bottom:30px;}
+#nav_brick_ul { /*FOR EVERYTHING*/ margin: 0 0 0 20px;  color: #fff;  /*margin:0 0 30px 75px;*/ list-style:none; width:100%; display:block; overflow:hidden; font-family:helvetica,sans; font-weight:bold; }
+.nav_brick_li {float:left; padding:2px; margin-top:1px; list-style-type:none; display:block; color:#fff;}
+.nav_brick_li a:hover { text-decoration:underline; background-color:#173f8a; }
+.nav_brick {display: block; color: #fff; padding-top: 3px; padding-right: 8px; padding-bottom: 3px; padding-left: 8px; width: auto; text-decoration: none; background-color:#172c4b; font-size:15px;}
+.nav_brick_li a {color:#fff;}
+
+/*new labels */
+.sectionLabel {
+    font-family: Francois One;
+    text-align: left;
+    color: white;
+    width: 100%;
+    margin: 10px 0;
+    padding:2px;
+    background-color: #606060;
+    height:100%;
+    font-size: 14px;
+     border-bottom: 3px solid #CCC;
+}
+
+span.navbut {
+  position:relative;
+  top:-5px;
+  float:right;
+}
+.row { clear: both; width: 100%; max-width: 1000px; margin: 0 auto; }
+.col_2 {
+width: 13.5%;
+}
+.col_1, .col_2, .col_3, .col_4, .col_5, .col_6, .col_7, .col_8, .col_9, .col_10, .col_11 {
+float: left;
+margin-right: 3.8%;
+position: relative;
+}
+
+.col_1 {width: 4.85%;}  /* ie - 4.7% */
+.col_2 {width: 13.5%;}  /* ie - 13.2% */
+.col_3 {width: 20.8%;} /* ie - 22.05% */
+.col_4 {width: 30.8%;} 	/* ie - 30.6% */
+.col_5 {width: 39.45%;} /* ie - 39% */
+.col_6 {width: 48.1%;} 	/* ie - 48% */
+.col_7 {width: 56.75%;} /* ie - 56.75% */
+.col_8 {width: 65.4%;} 	/* ie - 61.6% */
+.col_9 {width: 75.4%;} /* ie - 74.05% */
+.col_10 {width: 82.7%;} /* ie - 82.7% */
+.col_11 {width: 91.35%;}/* ie - 91.35% */
+.col_12 {clear: both; width: 100%; float: left;}
+.col_10 { width: 82.7%; }
+
+.row .col_8 .col_7.gutterBorder,
+.row .col_8 .col_6.gutterBorder,
+.row .col_8 .col_5.gutterBorder,
+.row .col_8 .col_4.gutterBorder,
+.row .col_8 .col_3.gutterBorder,
+.row .col_8 .col_2.gutterBorder,
+.row .col_8 .col_1.gutterBorder {
+/*todo: build out more subcol gutterborders */
+	margin-right: 2.89%;
+	padding-right: 2.89%;
+}
+.last {margin-right: 0 !important;}
+
+#results_container { top:230px; position:absolute; width:500px; padding:10px; height:400px; /*margin-left:30px; */float:left; }
+#results_container_ie { top:700px; position:absolute; width:500px; padding:10px; height:400px; /*margin-left:30px; */float:left; }
+#results_container_hills {top:500px; position:absolute; width:200px; padding-right:10px; /*margin-left:30px; */float:left;}
+#results_container_pin {  top:550px; position:absolute; width:300px; padding:10px; /*margin-top:0;/*margin-left:30px; */float:left;}
+#results_container_pin_ie {  top:550px; position:absolute; width:300px; padding:10px; /*margin-top:0;/*margin-left:30px; */float:left;}
+
+
+#results_container form {width:350px !important;}
+
+.fixed {  position: fixed; top: 0; background-color: #fff; }
+#results_container_pin.fixed {
+  position: fixed;
+  top: 0;
+}
+
+#map {float:right; height:775px; }
+#map img {}
+
+#pinmap {float:right;}
+#map08 {float:right; height:775px; }
+.key {width:20px; height:20px; float:left; margin:5px;  }
+#tooltip {color:#fff;   padding:4px; font-size:1.4em; font-family:helvetica; /*margin-top:5px;*/ position:absolute; background-color:#000; /*border: solid 1px #000;*/ }
+.obama_more_100k {background-color:#072c63; opacity:0.9; /*filter:alpha(opacity=40); /* For IE8 and earlier */ }
+.obama_more_25k {background-color:#072c63; opacity:0.6; /*filter:alpha(opacity=40); /* For IE8 and earlier */ }
+.obama_less_25k {width:20px; height:20px; float:left; margin:5px;  background-color:#072c63; opacity:0.3; /*filter:alpha(opacity=40); /* For IE8 and earlier */ }
+.mccain_more_25k {background-color:#9e0500; opacity:0.4; /*filter:alpha(opacity=40); /* For IE8 and earlier */ }
+.mccain_less_25k {width:20px; height:20px; float:left; margin:5px;  background-color:#9e0500; opacity:0.2; /*filter:alpha(opacity=40); /* For IE8 and earlier */ }
+.third_more_25k {background-color:#009900; opacity:0.4; /*filter:alpha(opacity=40); /* For IE8 and earlier */ }
+.third_less_25k {width:20px; height:20px; float:left; margin:5px;  background-color:#009900; opacity:0.2; /*filter:alpha(opacity=40); /* For IE8 and earlier */ }
+.undecided {background-color:#aaa; width:20px; height:20px; float:left; margin:5px; opacity:0.3;}
+.blank {background-color:#fff; width:20px; height:20px; float:left; margin:5px; opacity:0.3;}
+.winner_bold {font-weight: bold;}
+.winner_check {background-image:url('http://stand-your-ground-law.s3.amazonaws.com/media/images/check.png'); width:20px; height:20px; float:left; margin:5px; /*opacity:0.3;*/ background-size:20px 20px; background-repeat:no-repeat;}
+.winner_check_dem {background-image:url('http://stand-your-ground-law.s3.amazonaws.com/media/images/demcheck.png'); width:20px; height:20px; float:left; margin:5px; /*opacity:0.3;*/ background-size:20px 20px; background-repeat:no-repeat;}
+.winner_check_gop {background-image:url('http://stand-your-ground-law.s3.amazonaws.com/media/images/gopcheck.png'); width:20px; height:20px; float:left; margin:5px; /*opacity:0.3;*/ background-size:20px 20px; background-repeat:no-repeat;}
+.turnout {font-style:italic; font-size:12px;}
+/*feedburner styling*/
+
+.cty_results_table table { width: 500px; border-spacing: 0; border-collapse: collapse; font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif ;}
+.cty_results_table table thead th { border-bottom: 1px solid #CCC; /*font-weight: bold;*/ padding: 5px; }
+#results_container_hills .cty_results_table table { width: 250px;}
+#results_container_pin .cty_results_table table { width: 300px;}
+.yes { background-color: #E8EBF0; }
+.cty_results_table table tbody td { border-bottom: 1px solid #CCC; padding: 5px; font-size: 14px; text-align:center;}
+.key_color { width:10%; }
+.cand_name { width:40%; }
+.cand_votes { width:25%; text-align: right !important; padding-right: 30px  !important;}
+.cand_pct { width:25%; text-align: right !important; padding-right: 40px  !important;}
+
+#results2008 {margin-left:20px;}
+
+#alert {width:778px; padding:5px; height:30px; margin:10px 90px; border:1px solid #999; background-color:#EFDFB9; font-size:16px; text-align:center;}
+
+#ElectionCoverage20125lgvie6pvh408qhdlofqlh6lso ul { margin-top:20px; }
+#ElectionCoverage20125lgvie6pvh408qhdlofqlh6lso li  { padding:0px; }
+#ElectionCoverage20125lgvie6pvh408qhdlofqlh6lso li .headline {font-size:14px;}
+#ElectionCoverage20125lgvie6pvh408qhdlofqlh6lso li .date {padding:0 0 10px 0; font-size:12px;}
+
+/*ap results styling*/
+.results {padding:10px;}
+.results_table_container { }
+.results h4 {padding:10px 0;}
+
+.eln-office-name {color:#000; font-size:0; padding:0; visibility:hidden; line-height:0;}
+.eln-date {color:#000; font-size:0; padding:0; visibility:hidden; line-height:0;}
+.eln-bodyregular {font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif; font-size:12px; padding: 3px 3px;}
+.eln-bodyreg-bar {font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif; font-size:12px; padding: 3px 3px; background-color:#ccc;}
+.eln-subhed-table {font-family:Helvetica, "Lucida Sans", Tahoma, sans-serif; font-size:12px; padding: 3px 3px; background-color:#878787; font-weight:bold; color:#fff;}
+
+/*gigya sharebar*/
+#componentDiv {margin-top: 15px;}
+.gig-share-bar-container table { margin:0 auto; }
+
+
